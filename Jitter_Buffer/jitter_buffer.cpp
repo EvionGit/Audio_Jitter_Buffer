@@ -98,7 +98,9 @@ namespace jbuf
 
 		calculate_jitter(packet,arrived_time);
 		AudioPacket ap(packet); // copy headers info
-
+		ap.data = new char[packet.size]; // bind pointer to data-block
+		memcpy(ap.data, packet.data, packet.size); // copy payload data from arrived packet to block
+	
 
 
 		// 1. if received packet_id > last packet_id : add
@@ -122,6 +124,7 @@ namespace jbuf
 						buffer.insert(it, ap);
 						break;
 					}
+					delete[] ap.data;
 					return JDUPLICATEPACKET;
 					
 				}
@@ -130,10 +133,12 @@ namespace jbuf
 		}
 		else if (ap.id == buffer.front().id || ap.id == buffer.back().id)
 		{
+			delete[] ap.data;
 			return JDUPLICATEPACKET;
 		}
 		else
 		{
+			delete[] ap.data;
 			return JLATEPACKET;
 		}
 		
@@ -145,15 +150,6 @@ namespace jbuf
 			current_buffer_size_ms -= buffer.front().data_in_ms;
 			delete[] buffer.front().data;
 			buffer.pop_front();
-			
-
-		}
-		else
-		{
-
-			char* data_block = new char[packet.size]; // init block
-			memcpy(data_block, packet.data, packet.size); // copy payload data from arrived packet to block
-			ap.data = data_block; // bind pointer to data-block
 			
 
 		}

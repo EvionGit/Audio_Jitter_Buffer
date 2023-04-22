@@ -9,11 +9,13 @@ namespace pack
 	class AudioPacket
 	{
 	public:
+
 		uint16_t id;
 		uint16_t size;
 		int32_t data_in_ms;
 		int64_t timestamp;
 		char* data;
+		
 
 	/*public:
 		AudioPacket() : id(0),size(0),data_in_ms(0),timestamp(0),data(0) {};
